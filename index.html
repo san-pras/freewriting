@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stasiun Bit</title>
+<title>MUNTAHIN IDE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -109,7 +109,7 @@
     cursor: pointer;
   }
   .row:hover { background: rgba(255,255,255,0.03); }
-  .row-plat { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--amber); width: 44px; flex-shrink: 0; }
+  .row-plat { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--amber); width: 44px; flex-shrink: 0; letter-spacing: 0.5px; }
   .row-body { flex: 1; min-width: 0; }
   .row-title { font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .row-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--paper-dim); margin-top: 2px; }
@@ -190,8 +190,8 @@
 <body>
 
 <div class="board">
-  <div class="board-title">STASIUN BIT</div>
-  <div class="board-sub">Keberangkatan Materi &middot; Jalur Nulis Bebas</div>
+  <div class="board-title">MUNTAHIN IDE</div>
+  <div class="board-sub">Tempat nulis bit sebelum idenya lupa</div>
   <div class="flip-clock mono" id="clockDisplay">--:--</div>
 </div>
 
@@ -238,12 +238,12 @@ function entryToText(e) {
   const date = new Date(e.createdAt).toLocaleString('id-ID');
   if (e.type === 'quickcapture') {
     return [
-      `TANGKAP CEPAT · ${date}`,
+      `TULIS CEPAT · ${date}`,
       '='.repeat(40),
       `Kejadian: ${e.kejadian || '-'}`,
       `Dialog: ${e.dialog || '-'}`,
       `Rasa fisik: ${e.rasa || '-'}`,
-      `Skala keresahan: ${e.skala || '-'}/5`
+      `Seberapa ganggu: ${e.skala || '-'}/5`
     ].join('\n');
   }
   const tagLabel = { premis: '[PREMIS KUAT]', punch: '[PUNCHLINE?]', detail: '[BUTUH DETAIL]', buang: '[BUANG]' };
@@ -328,22 +328,22 @@ function render() {
 async function renderHome() {
   app.innerHTML = `
     <div class="cta-row">
-      <div class="cta-label">Peron 1 &middot; Reaksi Cepat</div>
+      <div class="cta-label">Kalo lagi ada ide dadakan</div>
       <button class="btn btn-primary" id="btnQC">
-        ⚡ Tangkap Cepat
-        <div class="cta-desc">Keresahan muncul sekarang? Rekam detailnya sebelum ilang. 1 menit doang.</div>
+        ⚡ Tulis Cepat
+        <div class="cta-desc">Lagi kepikiran sesuatu tapi lagi buru-buru? Tulis detailnya sekarang sebelum lupa. 1 menit doang.</div>
       </button>
     </div>
     <div class="cta-row">
-      <div class="cta-label">Peron 2 &middot; Sesi Nulis</div>
+      <div class="cta-label">Kalo mau duduk dan nulis beneran</div>
       <button class="btn btn-secondary" id="btnSession">
-        🔥 Mulai Sesi Nulis (Fase Panas → Freewrite → Tagging)
-        <div class="cta-desc">±25 menit. Mode kunci mundur aktif — nggak bisa hapus, cuma bisa maju.</div>
+        🔥 Mulai Sesi Nulis
+        <div class="cta-desc">±25 menit: pemanasan → nulis bebas → milihin mana yang bagus. Pas nulis bebas, delete-nya dimatiin biar nggak keburu ngedit.</div>
       </button>
     </div>
     <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;">
-      <span>Log Keberangkatan</span>
-      <button class="btn-small btn-ghost" id="btnExportAll" style="text-transform:none;letter-spacing:0;font-family:'JetBrains Mono',monospace;">⬇ unduh semua .txt</button>
+      <span>Riwayat</span>
+      <button class="btn-small btn-ghost" id="btnExportAll" style="text-transform:none;letter-spacing:0;font-family:'JetBrains Mono',monospace;">⬇ Unduh semua jadi file text</button>
     </div>
     <div id="entryList"><div class="loading-note">memuat...</div></div>
   `;
@@ -360,7 +360,7 @@ async function loadEntryList() {
   const keys = await storeList('entries:');
   const listEl = document.getElementById('entryList');
   if (!keys || keys.length === 0) {
-    listEl.innerHTML = `<div class="empty-note">Belum ada keberangkatan. Mulai dari Tangkap Cepat atau Sesi Nulis di atas.</div>`;
+    listEl.innerHTML = `<div class="empty-note">Belum ada tulisan. Mulai dari Tulis Cepat atau Mulai Sesi Nulis di atas.</div>`;
     return;
   }
   const entries = [];
@@ -370,10 +370,10 @@ async function loadEntryList() {
   }
   entries.sort((a, b) => b.createdAt - a.createdAt);
   listEl.innerHTML = entries.map((e, i) => {
-    const plat = e.type === 'quickcapture' ? 'QC' : 'FW';
-    const title = e.type === 'quickcapture' ? (e.kejadian || '(tanpa judul)').slice(0, 40) : (e.topic || 'Sesi freewrite').slice(0,40);
+    const plat = e.type === 'quickcapture' ? 'CEPAT' : 'SESI';
+    const title = e.type === 'quickcapture' ? (e.kejadian || '(tanpa judul)').slice(0, 40) : (e.topic || 'Sesi nulis').slice(0,40);
     const tagged = e.tags && Object.keys(e.tags).length > 0;
-    const status = e.type === 'session' ? (tagged ? '<span class="row-status status-tagged">SUDAH DITAG</span>' : '<span class="row-status status-baru">BELUM DITAG</span>') : '';
+    const status = e.type === 'session' ? (tagged ? '<span class="row-status status-tagged">UDAH DIPILIH</span>' : '<span class="row-status status-baru">BELUM DIPILIH</span>') : '';
     return `<div class="row" data-key="${e.key}">
       <div class="row-plat mono">${plat}</div>
       <div class="row-body">
@@ -404,26 +404,26 @@ function renderQuickCapture() {
     <div class="topbar">
       <button class="back-link" id="back">&larr; balik</button>
     </div>
-    <div class="cta-label">Tangkap Cepat</div>
+    <div class="cta-label">Tulis Cepat</div>
     <div class="paper-card">
       <div class="qc-field">
         <span class="field-label">Kejadiannya apa? (1-2 kalimat, jangan disaring)</span>
         <textarea id="qcKejadian" rows="3" placeholder="Tadi di angkringan ada bapak-bapak..."></textarea>
       </div>
       <div class="qc-field">
-        <span class="field-label">Kata-kata PERSIS yang diomongin (dialog asli)</span>
+        <span class="field-label">Kata-kata persis yang diomongin</span>
         <textarea id="qcDialog" rows="2" placeholder="'Gulanya kurang ki mas'"></textarea>
       </div>
       <div class="qc-field">
-        <span class="field-label">Rasa di badan pas itu kejadian</span>
-        <input type="text" id="qcRasa" placeholder="dada rasanya kaku, tangan gemeter...">
+        <span class="field-label">Badan kamu waktu itu rasanya gimana</span>
+        <input type="text" id="qcRasa" placeholder="dada rasanya kaku, tangan gemeteran...">
       </div>
       <div class="qc-field">
-        <span class="field-label">Skala keresahan</span>
+        <span class="field-label">Seberapa ganggu ini di kepala kamu</span>
         <input type="range" id="qcSkala" min="1" max="5" value="3">
         <div class="scale-labels"><span>1 · lucu doang</span><span>5 · ganggu banget</span></div>
       </div>
-      <button class="btn btn-primary" id="qcSave">Simpen ke Stasiun</button>
+      <button class="btn btn-primary" id="qcSave">Simpen</button>
     </div>
   `;
   document.getElementById('back').onclick = () => { state = { view: 'home' }; render(); };
@@ -440,7 +440,7 @@ function renderQuickCapture() {
     };
     const key = 'entries:qc-' + Date.now();
     await storeSet(key, entry);
-    showToast('Ketangkep. Aman.');
+    showToast('Kesimpen.');
     state = { view: 'home' };
     render();
   };
@@ -453,14 +453,14 @@ function renderWarmup() {
   app.innerHTML = `
     <div class="topbar">
       <button class="back-link" id="back">&larr; batal</button>
-      <span class="mono" style="font-size:11px;color:var(--paper-dim)">FASE PANAS · 5 MENIT</span>
+      <span class="mono" style="font-size:11px;color:var(--paper-dim)">PEMANASAN · 5 MENIT</span>
     </div>
     <div class="timer-big mono" id="warmupTimer">05:00</div>
     <div class="prompt-box"><p id="warmupPrompt">${WARMUP_PROMPTS[0]}</p></div>
     <textarea id="warmupScratch" rows="6" placeholder="Coret-coret bebas di sini, nggak usah rapi..." style="background:var(--navy-deep);color:var(--paper);border:1px solid var(--line);font-family:'Newsreader',serif;font-size:16px;padding:14px;width:100%;border-radius:4px;"></textarea>
     <div style="display:flex;gap:10px;margin-top:14px;">
-      <button class="btn btn-ghost" id="nextPrompt" style="flex:1">Prompt berikutnya →</button>
-      <button class="btn btn-secondary" id="skipToFw" style="flex:1">Lewati, langsung nulis →</button>
+      <button class="btn btn-ghost" id="nextPrompt" style="flex:1">Ganti pertanyaan →</button>
+      <button class="btn btn-secondary" id="skipToFw" style="flex:1">Udah, langsung nulis →</button>
     </div>
   `;
   document.getElementById('back').onclick = () => { clearInterval(warmupTimerHandle); state = { view: 'home' }; render(); };
@@ -472,7 +472,7 @@ function renderWarmup() {
   const goToFreewrite = () => {
     clearInterval(warmupTimerHandle);
     const scratch = document.getElementById('warmupScratch').value;
-    state = { view: 'freewrite', warmupText: scratch, topic: scratch.split('\n')[0].slice(0,60) || 'Sesi freewrite', freewriteText: '', lockOn: true };
+    state = { view: 'freewrite', warmupText: scratch, topic: scratch.split('\n')[0].slice(0,60) || 'Sesi nulis', freewriteText: '', lockOn: true };
     render();
   };
   document.getElementById('skipToFw').onclick = goToFreewrite;
@@ -496,12 +496,12 @@ function renderFreewrite() {
       <div class="fw-top">
         <span class="fw-timer mono" id="fwTimer">${fmtTime(remaining)}</span>
         <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--paper-dim);letter-spacing:1px;">TULIS TERUS, JANGAN BERHENTI</span>
-        <span class="fw-lock-badge ${lockOn ? '' : 'off'}" id="lockBadge">${lockOn ? '🔒 KUNCI MUNDUR' : '🔓 BEBAS EDIT'}</span>
+        <span class="fw-lock-badge ${lockOn ? '' : 'off'}" id="lockBadge">${lockOn ? '🔒 Backspace mati' : '🔓 Backspace nyala'}</span>
       </div>
-      <div class="fw-flash" id="fwFlash">terus aja, jangan mundur</div>
+      <div class="fw-flash" id="fwFlash">lanjut aja, jangan dihapus</div>
       <textarea class="fw-text" id="fwText" placeholder="Mulai aja. Boleh jelek, boleh typo, boleh nggak nyambung...">${state.warmupText ? '' : ''}</textarea>
       <div class="fw-bottom">
-        <button id="fwFinish">selesai duluan & lanjut ke tagging →</button>
+        <button id="fwFinish">udahan, lanjut milihin yang bagus →</button>
       </div>
     </div>
   `;
@@ -512,7 +512,7 @@ function renderFreewrite() {
   document.getElementById('lockBadge').onclick = () => {
     lockOn = !lockOn;
     const b = document.getElementById('lockBadge');
-    b.textContent = lockOn ? '🔒 KUNCI MUNDUR' : '🔓 BEBAS EDIT';
+    b.textContent = lockOn ? '🔒 Backspace mati' : '🔓 Backspace nyala';
     b.classList.toggle('off', !lockOn);
   };
 
@@ -538,7 +538,7 @@ function renderFreewrite() {
     clearInterval(fwTimerHandle);
     state = {
       view: 'tagging',
-      topic: state.topic || 'Sesi freewrite',
+      topic: state.topic || 'Sesi nulis',
       warmupText: state.warmupText || '',
       freewriteText: ta.value,
       createdAt: Date.now()
@@ -563,13 +563,13 @@ function renderTagging() {
 
   app.innerHTML = `
     <div class="topbar">
-      <span class="mono" style="font-size:11px;color:var(--paper-dim)">TAGGING · Tandain yang menjanjikan</span>
+      <span class="mono" style="font-size:11px;color:var(--paper-dim)">Sekarang pilihin mana yang bagus</span>
     </div>
-    <div class="section-title" style="margin-top:0">Hasil Tulisan</div>
+    <div class="section-title" style="margin-top:0">Hasil Tulisan Kamu</div>
     <div id="paraList"></div>
     <div style="display:flex;gap:10px;margin-top:16px;">
-      <button class="btn btn-primary" id="saveSession" style="flex:1">Simpen sesi ini</button>
-      <button class="btn btn-secondary" id="dlSession" style="flex:1">⬇ Unduh .txt</button>
+      <button class="btn btn-primary" id="saveSession" style="flex:1">Simpen</button>
+      <button class="btn btn-secondary" id="dlSession" style="flex:1">⬇ Unduh semua jadi file text</button>
     </div>
   `;
 
@@ -618,7 +618,7 @@ function renderTagging() {
     };
     const key = 'entries:session-' + Date.now();
     await storeSet(key, entry);
-    showToast('Sesi kesimpen. Kerja bagus.');
+    showToast('Kesimpen. Kerja bagus.');
     state = { view: 'home' };
     render();
   };
@@ -635,7 +635,7 @@ function renderDetail() {
     <div class="topbar">
       <button class="back-link" id="back">&larr; balik</button>
       <div style="display:flex;gap:14px;">
-        <button class="back-link" id="dlBtn" style="color:var(--amber)">⬇ unduh .txt</button>
+        <button class="back-link" id="dlBtn" style="color:var(--amber)">⬇ Unduh semua jadi file text</button>
         <button class="back-link" id="delBtn" style="color:var(--rust)">hapus</button>
       </div>
     </div>
@@ -647,7 +647,7 @@ function renderDetail() {
         <p class="serif" style="font-size:17px;margin:0 0 14px;">${escapeHtml(e.kejadian)}</p>
         ${e.dialog ? `<span class="field-label">Dialog</span><p class="serif" style="font-size:16px;margin:0 0 14px;">"${escapeHtml(e.dialog)}"</p>` : ''}
         ${e.rasa ? `<span class="field-label">Rasa fisik</span><p class="serif" style="font-size:16px;margin:0 0 14px;">${escapeHtml(e.rasa)}</p>` : ''}
-        <span class="field-label">Skala keresahan: ${e.skala}/5</span>
+        <span class="field-label">Seberapa ganggu: ${e.skala}/5</span>
       </div>
     `;
   } else {
